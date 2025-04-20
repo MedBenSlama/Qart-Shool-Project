@@ -1,0 +1,229 @@
+{
+  "info": {
+    "name": "Qart API (Fixed URLs)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "qartId", "value": "" },
+    { "key": "commentId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth › Register",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\":\"test@example.com\",\n  \"password\":\"pass123\",\n  \"firstname\":\"Test\",\n  \"lastname\":\"User\"\n}"
+        },
+        "url": "{{baseUrl}}/api/auth/register"
+      }
+    },
+    {
+      "name": "Auth › Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.collectionVariables.set('token', json.token);",
+              "pm.collectionVariables.set('userId', json.user._id);",
+              "console.log('→ token, userId set');"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\":\"test@example.com\",\n  \"password\":\"pass123\"\n}"
+        },
+        "url": "{{baseUrl}}/api/auth/login"
+      }
+    },
+    {
+      "name": "User › Get Profile",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/users/me"
+      }
+    },
+    {
+      "name": "User › Update Profile",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstname\":\"NewFirst\",\n  \"lastname\":\"NewLast\",\n  \"email\":\"new@example.com\"\n}"
+        },
+        "url": "{{baseUrl}}/api/users/me"
+      }
+    },
+    {
+      "name": "User › Update Avatar",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "body": {
+          "mode": "formdata",
+          "formdata": [{ "key": "avatar", "type": "file", "src": "" }]
+        },
+        "url": "{{baseUrl}}/api/users/me/avatar"
+      }
+    },
+    {
+      "name": "User › Follow",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/users/{{userId}}/follow"
+      }
+    },
+    {
+      "name": "User › Unfollow",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/users/{{userId}}/unfollow"
+      }
+    },
+    {
+      "name": "Qart › Get All",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/qarts"
+      }
+    },
+    {
+      "name": "Qart › Get By ID",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/qarts/{{qartId}}"
+      }
+    },
+    {
+      "name": "Qart › Get By User ID",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/qarts/user/{{userId}}"
+      }
+    },
+    {
+      "name": "Qart › Get Liked",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/qarts/liked"
+      }
+    },
+    {
+      "name": "Qart › Create",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.collectionVariables.set('qartId', json._id);",
+              "console.log('→ qartId set:', json._id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "content", "type": "text", "value": "Hello Qart!" },
+            { "key": "image", "type": "file", "src": "" }
+          ]
+        },
+        "url": "{{baseUrl}}/api/qarts"
+      }
+    },
+    {
+      "name": "Qart › Delete",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/qarts/{{qartId}}"
+      }
+    },
+    {
+      "name": "Qart › Like",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/qarts/{{qartId}}/like"
+      }
+    },
+    {
+      "name": "Qart › Unlike",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/qarts/{{qartId}}/unlike"
+      }
+    },
+    {
+      "name": "Comment › Get By Qart",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/comments/qart/{{qartId}}"
+      }
+    },
+    {
+      "name": "Comment › Add",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const json = pm.response.json();",
+              "pm.collectionVariables.set('commentId', json._id);",
+              "console.log('→ commentId set:', json._id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"text\":\"Nice post!\",\n  \"qartId\":\"{{qartId}}\"\n}"
+        },
+        "url": "{{baseUrl}}/api/comments"
+      }
+    },
+    {
+      "name": "Comment › Delete",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{baseUrl}}/api/comments/{{commentId}}"
+      }
+    }
+  ]
+}
